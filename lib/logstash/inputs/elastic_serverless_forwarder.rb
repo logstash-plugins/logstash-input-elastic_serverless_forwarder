@@ -34,6 +34,7 @@ class LogStash::Inputs::ElasticServerlessForwarder < LogStash::Inputs::Base
   # ssl-trust
   config :ssl_certificate_authorities, :validate => :path, :list => true
   config :ssl_client_authentication,   :validate => %w(none optional required), default: 'none'
+  config :ssl_verification_mode,       :validate => %w(certificate),            default: 'certificate'
 
   # ssl-expert-mode
   config :ssl_cipher_suites,           :validate => :string,  :list => true

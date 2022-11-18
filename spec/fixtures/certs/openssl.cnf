@@ -36,7 +36,7 @@ keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment
 extendedKeyUsage = clientAuth, emailProtection
 subjectAltName = "DNS:localhost, IP:127.0.0.1"
 
-[ client_cert_invalid_subject ]
+[ client_cert_no_matching_subject ]
 basicConstraints = CA:FALSE
 nsCertType = client, email
 nsComment = "OpenSSL Generated Client Certificate"

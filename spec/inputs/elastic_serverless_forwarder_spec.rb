@@ -207,19 +207,23 @@ describe LogStash::Inputs::ElasticServerlessForwarder do
         include_examples 'basic auth support'
       end
 
-      context 'when client provides trusted cert with invalid subject' do
+      context 'when client provides CA-signed cert without matching subjectAltName entry' do
         let(:client_ssl_options) do
           super().merge({
-                          keystore: generated_certs_directory.join('client_invalid_subject.p12').to_path,
+                          keystore: generated_certs_directory.join('client_no_matching_subject.p12').to_path,
                           keystore_password: '12345678',
                         })
         end
 
-        before(:each) do
-          pending("Validate HTTP Input's `ssl_verify_mode => peer` behaviour validating  subject/SAN of presented certificates when they are optional")
-        end
+        include_examples 'successful request handling'
 
-        include_examples 'bad certificate request handling'
+        context 'and `ssl_verification_mode => full`', skip: "pending implementation of `ssl_verification_mode => full`" do
+          let(:config) do
+            super().merge('ssl_verification_mode' => 'full')
+          end
+
+          include_examples 'bad certificate request handling'
+        end
       end
 
       context 'when client provides self-signed cert' do
@@ -258,18 +262,23 @@ describe LogStash::Inputs::ElasticServerlessForwarder do
         include_examples 'bad certificate request handling'
       end
 
-      context 'when client provides cert with invalid subject' do
+      context 'when client provides CA-signed cert without matching subjectAltName entry' do
         let(:client_ssl_options) do
           super().merge({
-                          keystore: generated_certs_directory.join('client_invalid_subject.p12').to_path,
+                          keystore: generated_certs_directory.join('client_no_matching_subject.p12').to_path,
                           keystore_password: '12345678',
                         })
         end
-        before(:each) do
-          pending("Validate HTTP Input's `ssl_verify_mode => force_peer` behaviour validating subject/SAN of presented certificates")
-        end
 
-        include_examples 'bad certificate request handling'
+        include_examples 'successful request handling'
+
+        context 'and `ssl_verification_mode => full`', skip: "pending implementation of `ssl_verification_mode => full`" do
+          let(:config) do
+            super().merge('ssl_verification_mode' => 'full')
+          end
+
+          include_examples 'bad certificate request handling'
+        end
       end
 
       context 'when client provides self-signed cert' do
