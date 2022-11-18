@@ -10,10 +10,6 @@ describe LogStash::Inputs::ElasticServerlessForwarder do
 
   let(:generated_certs_directory) { Pathname.new('../fixtures/certs/generated').expand_path(__dir__).realpath }
 
-  # before do
-  #   srand(RSpec.configuration.seed)
-  # end
-
   let(:client) { Manticore::Client.new(client_options) }
   let(:client_options) { { } }
   let(:request_options) do
@@ -166,10 +162,10 @@ describe LogStash::Inputs::ElasticServerlessForwarder do
 
   describe 'SSL enabled' do
     let(:config) do
-      super().merge(
+      super().merge({
         'ssl_certificate' => generated_certs_directory.join('server_from_root.crt').to_path,
-        'ssl_key'         => generated_certs_directory.join('server_from_root.key.pkcs8').to_path,        'ssl_handshake_timeout' => 20_000, # maybemaybemaybe?
-      )
+        'ssl_key'         => generated_certs_directory.join('server_from_root.key.pkcs8').to_path,
+      })
     end
     let(:client_ssl_options) do
       { ca_file: generated_certs_directory.join('root.crt').to_path }
@@ -185,10 +181,10 @@ describe LogStash::Inputs::ElasticServerlessForwarder do
 
     context 'ssl_client_authentication => optional' do
       let(:config) do
-        super().merge(
+        super().merge({
           "ssl_client_authentication" => "optional",
           "ssl_certificate_authorities" => generated_certs_directory.join('root.crt').to_path,
-          )
+        })
       end
 
       context 'when client provides trusted cert' do
@@ -241,10 +237,10 @@ describe LogStash::Inputs::ElasticServerlessForwarder do
 
     context 'ssl_client_authentication => required' do
       let(:config) do
-        super().merge(
+        super().merge({
           "ssl_client_authentication" => "required",
           "ssl_certificate_authorities" => generated_certs_directory.join('root.crt').to_path,
-        )
+        })
       end
 
       context 'when client provides trusted cert' do

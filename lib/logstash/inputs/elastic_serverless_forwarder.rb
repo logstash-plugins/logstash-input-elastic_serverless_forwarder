@@ -33,13 +33,13 @@ class LogStash::Inputs::ElasticServerlessForwarder < LogStash::Inputs::Base
 
   # ssl-trust
   config :ssl_certificate_authorities, :validate => :path, :list => true
-  config :ssl_client_authentication,   :validate => %w(none optional required), default: 'none'
-  config :ssl_verification_mode,       :validate => %w(certificate),            default: 'certificate'
+  config :ssl_client_authentication,   :validate => %w(none optional required), :default => 'none'
+  config :ssl_verification_mode,       :validate => %w(certificate),            :default => 'certificate'
 
   # ssl-expert-mode
   config :ssl_cipher_suites,           :validate => :string,  :list => true
   config :ssl_supported_protocols,     :validate => :string,  :list => true
-  config :ssl_handshake_timeout,       :validate => :number
+  config :ssl_handshake_timeout,       :validate => :number,  :default => 10_000
 
   # we present the ES-like ssl_certificate_authorities, but our
   # internal http input plugin uses ssl_verify_mode to describe
@@ -60,7 +60,7 @@ class LogStash::Inputs::ElasticServerlessForwarder < LogStash::Inputs::Base
   def register
     logger.debug("registering inner HTTP input plugin")
     @internal_http.register
-    logger.debug("registering inner HTTP input plugin")
+    logger.debug("registered inner HTTP input plugin")
   end # def register
 
 
@@ -118,7 +118,7 @@ class LogStash::Inputs::ElasticServerlessForwarder < LogStash::Inputs::Base
 
         http_options['ssl_cipher_suites'] = @ssl_cipher_suites if @original_params.include?('ssl_cipher_suites')
         http_options['ssl_supported_protocols'] = @ssl_supported_protocols if @original_params.include?('ssl_supported_protocols')
-        http_options['ssl_handshake_timeout'] = @ssl_supported_protocols if @original_params.include?('ssl_handshake_timeout')
+        http_options['ssl_handshake_timeout'] = @ssl_handshake_timeout
 
         http_options.merge!(ssl_identity_options)
         http_options.merge!(ssl_trust_options)

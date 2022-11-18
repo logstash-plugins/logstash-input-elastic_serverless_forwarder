@@ -290,6 +290,11 @@ the *$JDK_HOME/conf/security/java.security* configuration file. That is, `TLSv1.
 * Value type is <<string,string>>
 * There is only one currently-supported mode:
 ** `certificate`: verifies that a certificate provided by the client is signed by a trusted authority (CA), is within its valid date range, and that the client has possession of the associated key, but does _not_ perform hostname validation.
+// NOTE: `ssl_verification_mode => full` is pending upstream support, but when it arrives it will look like:
+////
+** `full`: fully validates the certificate as in `certificate` mode, and also validates that the client's outbound IP address is represented in the certificate's identity claims for `subject` and/or `subjectAltName`.
+////
+* The default value is `certificate`.
 
 When <<plugins-{type}s-{plugin}-ssl_client_authentication>> causes a client to present a certificate, this setting controls how that certificate is verified.
 
