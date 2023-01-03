@@ -41,6 +41,38 @@ describe LogStash::Inputs::ElasticServerlessForwarder do
       esf_input.stop
     end
 
+
+  end
+
+  context 'no user-defined codec' do
+    let(:config) { super().merge('ssl' => false) } # minimal config
+
+    ##
+    # @codec ivar is required PENDING https://github.com/elastic/logstash/issues/14828
+    context 'codec handling' do
+      it 'has an `@codec` ivar that inherits from `LogStash::Codecs::Base`' do
+        expect(esf_input).to be_instance_variable_defined(:@codec)
+        codec = esf_input.instance_variable_get(:@codec)
+
+        expect(codec).to_not be_nil
+        expect(codec.class).to be < LogStash::Codecs::Base # LogStash::Codecs::Delegator shenanigans
+      end
+    end
+
+    context 'when instantiated with a string codec' do
+      let(:config) { super().merge("codec" => "json_lines") }
+      it 'fails with a helpful configuration error' do
+        expect { described_class.new(config) }.to raise_exception(LogStash::ConfigurationError, a_string_including("codec"))
+      end
+    end
+
+    context 'when instantiated with a codec instance' do
+      let(:codec_instance) { Class.new(LogStash::Codecs::Base) { config_name 'test'}.new("id" => "123") }
+      let(:config) { super().merge("codec" => codec_instance) }
+      it 'fails with a helpful configuration error' do
+        expect { described_class.new(config) }.to raise_exception(LogStash::ConfigurationError, a_string_including("codec"))
+      end
+    end
   end
 
   shared_context "basic request handling" do

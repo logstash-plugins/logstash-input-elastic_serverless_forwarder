@@ -12,9 +12,6 @@ class LogStash::Inputs::ElasticServerlessForwarder < LogStash::Inputs::Base
 
   config_name "elastic_serverless_forwarder"
 
-  # no-codec
-  config :codec, obsolete: 'The elastic_serverless_forwarder input does not have an externally-configurable codec'
-
   # bind address
   config :host, :validate => :string, :default => "0.0.0.0"
   config :port, :validate => :number, :required => true
@@ -54,6 +51,11 @@ class LogStash::Inputs::ElasticServerlessForwarder < LogStash::Inputs::Base
 
   def initialize(*a)
     super
+
+    if original_params.include?('codec')
+      fail LogStash::ConfigurationError, 'The `elastic_serverless_forwarder` input does not have an externally-configurable `codec`'
+    end
+
     @internal_http = plugin_factory.input('http').new(inner_http_input_options)
   end
 
