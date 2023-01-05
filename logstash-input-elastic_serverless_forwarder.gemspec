@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = 'logstash-input-elastic_serverless_forwarder'
-  s.version = '0.1.0'
+  s.version = '0.1.1'
   s.licenses = ['Apache License (2.0)']
   s.summary = "Receives events from Elastic Serverless Forwarder over HTTP or HTTPS"
   s.description     = "This gem is a Logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/logstash-plugin install gemname. This gem is not a stand-alone program"
