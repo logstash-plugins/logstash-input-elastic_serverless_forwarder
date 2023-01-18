@@ -58,6 +58,14 @@ input {
 
 |=======================================================================================================================
 
+.Technology Preview
+****
+This {esf-name} input plugin is part of a _Technology Preview_, which means that both configuration options and implementation details are subject to change in minor releases without being preceded by deprecation warnings.
+
+Before upgrading this plugin or Logstash itself, please pay special attention to the changelogs to avoid being caught by surprise.
+****
+
+
 [id="plugins-{type}s-{plugin}-enrichment"]
 ==== Enrichment
 
@@ -65,6 +73,11 @@ This input provides _minimal enrichment_ on events, and avoids including informa
 If the decoded event has a valid ISO8601-encoded `@timestamp`, it will be used. Otherwise this required field will be populated with the current time.
 
 NOTE: Senders are advised to use care with respect to fields that are {logstash-ref}/processing.html#reserved-fields[reserved in Logstash].
+
+
+////
+// BEGIN: Elastic-internal implementation details
+//
 
 [id="plugins-{type}s-{plugin}-blocking"]
 ==== Blocking Behavior
@@ -75,6 +88,10 @@ A client that receives an HTTP request timeout is expected to retry the entire r
 
 When this plugin is blocked, it will reject _new_ requests with HTTP `429 Too Many Requests`.
 Clients that receive `429`-s are expected to wait a moment before retrying the request — exponential back-off is encouraged to ease flood recovery.
+
+//
+// END: Elastic-internal implementation details
+////
 
 [id="plugins-{type}s-{plugin}-security"]
 ==== Security
