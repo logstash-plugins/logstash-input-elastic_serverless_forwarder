@@ -264,7 +264,7 @@ If you wish to configure this plugin to reject connections from untrusted hosts,
 * Value type is <<boolean,boolean>>
 * Default value is `true`
 
-Events are by default sent over SSL, which requires configuring this plugin to present an identity certificate using <<plugins-{type}s-{plugin}-ssl_certificate>> and key using <<plugins-{type}s-{plugin}-ssl_key>>.
+Events are, by default, sent over SSL, which requires configuring this plugin to present an identity certificate using <<plugins-{type}s-{plugin}-ssl_certificate>> and key using <<plugins-{type}s-{plugin}-ssl_key>>.
 
 You can disable SSL with `+ssl_enabled => false+`.
 
