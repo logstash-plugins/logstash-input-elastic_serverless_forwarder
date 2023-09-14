@@ -3,12 +3,14 @@ require "logstash/inputs/base"
 require "logstash/namespace"
 
 require "logstash/plugin_mixins/plugin_factory_support"
+require "logstash/plugin_mixins/normalize_config_support"
 
 require 'logstash/inputs/http'
 require 'logstash/codecs/json_lines'
 
 class LogStash::Inputs::ElasticServerlessForwarder < LogStash::Inputs::Base
   include LogStash::PluginMixins::PluginFactorySupport
+  include LogStash::PluginMixins::NormalizeConfigSupport
 
   config_name "elastic_serverless_forwarder"
 
@@ -21,7 +23,8 @@ class LogStash::Inputs::ElasticServerlessForwarder < LogStash::Inputs::Base
   config :auth_basic_password,         :validate => :password
 
   # ssl-config
-  config :ssl,                         :validate => :boolean, :default => true
+  config :ssl,                         :validate => :boolean, :default => true, :deprecated => "Use 'ssl_enabled' instead."
+  config :ssl_enabled,                 :validate => :boolean, :default => true
 
   # ssl-identity
   config :ssl_certificate,             :validate => :path
@@ -38,19 +41,10 @@ class LogStash::Inputs::ElasticServerlessForwarder < LogStash::Inputs::Base
   config :ssl_supported_protocols,     :validate => :string,  :list => true
   config :ssl_handshake_timeout,       :validate => :number,  :default => 10_000
 
-  # we present the ES-like ssl_certificate_authorities, but our
-  # internal http input plugin uses ssl_verify_mode to describe
-  # the same behaviour.
-  SSL_CLIENT_AUTHENTICATION_TO_VERIFY_MODE_MAP = {
-    'none'     => 'none',
-    'optional' => 'peer',
-    'required' => 'force_peer',
-  }.each_value(&:freeze).freeze # deep freeze
-  private_constant :SSL_CLIENT_AUTHENTICATION_TO_VERIFY_MODE_MAP
-
-
   def initialize(*a)
     super
+
+    normalize_ssl_configs!
 
     if original_params.include?('codec')
       fail LogStash::ConfigurationError, 'The `elastic_serverless_forwarder` input does not have an externally-configurable `codec`'
@@ -109,14 +103,14 @@ class LogStash::Inputs::ElasticServerlessForwarder < LogStash::Inputs::Base
       if @auth_basic_username
         http_options['user'] = @auth_basic_username
         http_options['password'] = @auth_basic_password || fail(LogStash::ConfigurationError, '`auth_basic_password` is REQUIRED when `auth_basic_username` is provided')
-        logger.warn("HTTP Basic Auth over non-secured connection") if @ssl == false
+        logger.warn("HTTP Basic Auth over non-secured connection") if @ssl_enabled == false
       end
 
-      if @ssl == false
+      if @ssl_enabled == false
         ignored_ssl_settings = @original_params.keys.grep('ssl_')
-        logger.warn("Explicit SSL-related settings are ignored because `ssl => false`: #{ignored_ssl_settings.keys}") if ignored_ssl_settings.any?
+        logger.warn("Explicit SSL-related settings are ignored because `ssl_enabled => false`: #{ignored_ssl_settings.keys}") if ignored_ssl_settings.any?
       else
-        http_options['ssl'] = true
+        http_options['ssl_enabled'] = true
 
         http_options['ssl_cipher_suites'] = @ssl_cipher_suites if @original_params.include?('ssl_cipher_suites')
         http_options['ssl_supported_protocols'] = @ssl_supported_protocols if @original_params.include?('ssl_supported_protocols')
@@ -131,9 +125,10 @@ class LogStash::Inputs::ElasticServerlessForwarder < LogStash::Inputs::Base
   end
 
   def ssl_identity_options
+    ssl_enabled_config = @original_params.include?('ssl') ? 'ssl' : 'ssl_enabled'
     identity_options = {
-      'ssl_certificate' => @ssl_certificate || fail(LogStash::ConfigurationError, '`ssl_certificate` is REQUIRED when `ssl => true`'),
-      'ssl_key'         => @ssl_key         || fail(LogStash::ConfigurationError, '`ssl_key` is REQUIRED when `ssl => true`')
+      'ssl_certificate' => @ssl_certificate || fail(LogStash::ConfigurationError, "`ssl_certificate` is REQUIRED when `#{ssl_enabled_config} => true`"),
+      'ssl_key'         => @ssl_key         || fail(LogStash::ConfigurationError, "`ssl_key` is REQUIRED when `#{ssl_enabled_config} => true`")
     }
     identity_options['ssl_key_passphrase'] = @ssl_key_passphrase if @original_params.include?('ssl_key_passphrase')
 
@@ -142,7 +137,7 @@ class LogStash::Inputs::ElasticServerlessForwarder < LogStash::Inputs::Base
 
   def ssl_trust_options
     trust_options = {
-      'ssl_verify_mode' => SSL_CLIENT_AUTHENTICATION_TO_VERIFY_MODE_MAP.fetch(@ssl_client_authentication)
+      'ssl_client_authentication' => @ssl_client_authentication
     }
     if @ssl_client_authentication == 'none'
       logger.warn("Explicit `ssl_certificate_authorities` is ignored because `ssl_client_authentication => #{@ssl_client_authentication}`")
@@ -158,6 +153,12 @@ class LogStash::Inputs::ElasticServerlessForwarder < LogStash::Inputs::Base
       # enrichment avoidance
       'ecs_compatibility' => 'disabled',
     }
+  end
+
+  def normalize_ssl_configs!
+    @ssl_enabled = normalize_config(:ssl_enabled) do |normalizer|
+      normalizer.with_deprecated_alias(:ssl)
+    end
   end
 
   class QueueWrapper

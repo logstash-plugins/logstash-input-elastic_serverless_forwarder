@@ -28,7 +28,7 @@ describe LogStash::Inputs::ElasticServerlessForwarder do
   let!(:queue) { Queue.new }
 
   context 'baseline' do
-    let(:config) { super().merge('ssl' => false) }
+    let(:config) { super().merge('ssl_enabled' => false) }
     let(:scheme) { 'http' }
 
     it_behaves_like "an interruptible input plugin" do
@@ -45,7 +45,7 @@ describe LogStash::Inputs::ElasticServerlessForwarder do
   end
 
   context 'no user-defined codec' do
-    let(:config) { super().merge('ssl' => false) } # minimal config
+    let(:config) { super().merge('ssl_enabled' => false) } # minimal config
 
     ##
     # @codec ivar is required PENDING https://github.com/elastic/logstash/issues/14828
@@ -185,7 +185,7 @@ describe LogStash::Inputs::ElasticServerlessForwarder do
   end
 
   describe 'unsecured HTTP' do
-    let(:config) { super().merge('ssl' => false) }
+    let(:config) { super().merge('ssl_enabled' => false) }
     let(:scheme) { 'http' }
 
     include_examples 'successful request handling'
@@ -318,6 +318,25 @@ describe LogStash::Inputs::ElasticServerlessForwarder do
         end
 
         include_examples 'bad certificate request handling'
+      end
+    end
+  end
+
+  describe 'deprecated SSL options' do
+    let(:config) do
+      super().merge({
+        'ssl_certificate' => generated_certs_directory.join('server_from_root.crt').to_path,
+        'ssl_key'         => generated_certs_directory.join('server_from_root.key.pkcs8').to_path,
+      })
+    end
+
+    [true, false].each do |enabled|
+      context "when `ssl => #{enabled}`" do
+        let(:config) { super().merge('ssl' => enabled) }
+
+        it "sets @ssl_enabled to `#{enabled}`" do
+          expect(esf_input.instance_variable_get(:@ssl_enabled)).to be enabled
+        end
       end
     end
   end
