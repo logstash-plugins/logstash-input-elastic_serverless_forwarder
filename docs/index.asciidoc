@@ -337,3 +337,17 @@ NOTE: Client identity is not typically validated using SSL because the receiving
 include::{include_path}/{type}.asciidoc[]
 
 :default_codec!:
+
+==== Elasticsearch output
+
+When this input is used along with an elasticsearch output you have to set the `document_id` in the output from the value of `@metadata._id` field:
+[source]
+----
+output {
+  elasticsearch {
+      ...
+      document_id => "%{[@metadata][_id]}"
+      ...
+  }
+}
+----
