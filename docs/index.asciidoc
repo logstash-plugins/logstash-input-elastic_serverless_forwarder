@@ -339,8 +339,8 @@ include::{include_path}/{type}.asciidoc[]
 :default_codec!:
 
 ==== Elasticsearch output
+When this input is used along with an {logstash-ref}/plugins-outputs-elasticsearch.html#plugins-outputs-elasticsearch[Elasticsearch output pluginh], you have to set the `document_id` in the output configuration.
 
-When this input is used along with an elasticsearch output you have to set the `document_id` in the output from the value of `@metadata._id` field:
 [source]
 ----
 output {
@@ -351,3 +351,12 @@ output {
   }
 }
 ----
+
+* For {esf-name} v1.9.0 and below you have to rename the field `_id` to `@metadata._id` with a filter:
+[source]
+----
+filter {
+    mutate { rename => { "_id" => "[@metadata][_id]" } }
+}
+----
+* Snce v1.10.0 of {esf-name}, the field `_id` is not present anymore and the `@metadata._id` one is s now sent to Logstash: only setting `document_id` as in the sample configuration above is enough.
