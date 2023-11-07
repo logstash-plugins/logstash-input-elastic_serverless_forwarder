@@ -338,7 +338,8 @@ include::{include_path}/{type}.asciidoc[]
 
 :default_codec!:
 
-==== Elasticsearch output
+[id="plugins-{type}s-{plugin}-es-output-notes"]
+==== Using {esf-name} with the Elasticsearch output
 When this input is used along with an {logstash-ref}/plugins-outputs-elasticsearch.html#plugins-outputs-elasticsearch[Elasticsearch output pluginh], you have to set the `document_id` in the output configuration.
 
 [source]
