@@ -357,7 +357,10 @@ output {
 [source]
 ----
 filter {
-    mutate { rename => { "_id" => "[@metadata][_id]" } }
+    # support ESF < 1.10
+    if [_id] and ![@metadata][_id] {
+      mutate { rename => { "_id" => "[@metadata][_id]" } }
+    }
 }
 ----
 * Starting from version 1.10.0 of {esf-name}, the `_id` field is no longer available, and instead, Logstash now receives the `@metadata._id` field. Simply configuring `document_id` as shown in the example above is sufficient."
