@@ -353,6 +353,7 @@ output {
 ----
 
 * For {esf-name} v1.9.0 and below you have to rename the field `_id` to `@metadata._id` with a filter:
+
 [source]
 ----
 filter {
