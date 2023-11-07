@@ -358,7 +358,7 @@ output {
 * For {esf-name} v1.9.0 and earlier, rename the field `_id` to `@metadata._id` with a filter:
 +
 
-[source]
+[source,ruby]
 ----
 filter {
     # support ESF < 1.10
