@@ -367,4 +367,4 @@ filter {
     }
 }
 ----
-* Starting from version 1.10.0 of {esf-name}, the `_id` field is no longer available, and instead, Logstash now receives the `@metadata._id` field. Simply configuring `document_id` as shown in the example above is sufficient."
+* Starting from version 1.10.0 of {esf-name}, the `_id` field is no longer available, and instead, Logstash now receives the `@metadata._id` field. Configuring `document_id` as shown in the example above is sufficient.
