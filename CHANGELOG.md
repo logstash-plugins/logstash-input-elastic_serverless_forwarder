@@ -1,3 +1,6 @@
+## 0.1.4
+  - Es output docs [#7](https://github.com/logstash-plugins/logstash-input-elastic_serverless_forwarder/pull/7)
+
 ## 0.1.3
   - Deprecates the `ssl` option in favor of `ssl_enabled` [#6](https://github.com/logstash-plugins/logstash-input-elastic_serverless_forwarder/pull/6)
   - Bumps `logstash-input-http` gem version to `>= 3.7.2` (SSL-normalized)
