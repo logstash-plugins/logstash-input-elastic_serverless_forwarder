@@ -148,6 +148,7 @@ output {
   }
 }
 ----
+* Starting from version 1.10.0 of {esf-name}, configuring `document_id` as shown in the example above is sufficient (the `_id` field is no longer available, and instead, Logstash now receives the `@metadata._id` field).
 
 * For {esf-name} v1.9.0 and earlier, rename the field `_id` to `@metadata._id` with a filter:
 +
@@ -160,7 +161,6 @@ filter {
     }
 }
 ----
-* Starting from version 1.10.0 of {esf-name}, the `_id` field is no longer available, and instead, Logstash now receives the `@metadata._id` field. Configuring `document_id` as shown in the example above is sufficient.
 
 [id="plugins-{type}s-{plugin}-options"]
 ==== {esf-name} Input Configuration Options
