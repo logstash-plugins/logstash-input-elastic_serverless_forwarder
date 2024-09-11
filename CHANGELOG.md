@@ -1,3 +1,6 @@
+## 0.1.5
+  - [DOC] Fix attributes to accurately set and clear default codec values [#8](https://github.com/logstash-plugins/logstash-input-elastic_serverless_forwarder/pull/8)
+
 ## 0.1.4
   - [DOC] Adds tips for using the logstash-input-elastic_serverless_forwarder plugin with the Elasticsearch output plugin [#7](https://github.com/logstash-plugins/logstash-input-elastic_serverless_forwarder/pull/7)
 
