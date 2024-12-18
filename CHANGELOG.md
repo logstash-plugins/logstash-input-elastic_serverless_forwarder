@@ -1,3 +1,6 @@
+## 1.0.0
+  - Promote from technical preview to GA [#10](https://github.com/logstash-plugins/logstash-input-elastic_serverless_forwarder/pull/10)
+
 ## 0.1.5
   - [DOC] Fix attributes to accurately set and clear default codec values [#8](https://github.com/logstash-plugins/logstash-input-elastic_serverless_forwarder/pull/8)
 
