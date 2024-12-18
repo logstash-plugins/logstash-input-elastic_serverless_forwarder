@@ -58,14 +58,6 @@ input {
 
 |=======================================================================================================================
 
-.Technical Preview
-****
-This {esf-name} input plugin is part of a _Technical Preview_, which means that both configuration options and implementation details are subject to change in minor releases without being preceded by deprecation warnings.
-
-Before upgrading this plugin or Logstash itself, please pay special attention to this plugin's https://github.com/logstash-plugins/logstash-input-elastic_serverless_forwarder/blob/main/CHANGELOG.md[CHANGELOG.md] to avoid being caught by surprise.
-****
-
-
 [id="plugins-{type}s-{plugin}-enrichment"]
 ==== Enrichment
 
