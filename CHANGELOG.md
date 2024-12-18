@@ -1,3 +1,9 @@
+## 2.0.0
+  - SSL settings that were marked deprecated in version `0.1.3` are now marked obsolete, and will prevent the plugin from starting.
+  - These settings are:
+    - `ssl`, which should be replaced by `ssl_enabled`
+    - [#11](https://github.com/logstash-plugins/logstash-input-elastic_serverless_forwarder/pull/11)
+
 ## 1.0.0
   - Promote from technical preview to GA [#10](https://github.com/logstash-plugins/logstash-input-elastic_serverless_forwarder/pull/10)
 
