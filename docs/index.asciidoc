@@ -159,6 +159,9 @@ filter {
 
 This plugin supports the following configuration options plus the <<plugins-{type}s-{plugin}-common-options>> described later.
 
+NOTE: As of version `2.0.0` of this plugin, a previously deprecated SSL setting has been removed.
+Please check out <<plugins-{type}s-{plugin}-obsolete-options>> for details.
+
 [cols="<,<,<",options="header",]
 |=======================================================================
 |Setting |Input type|Required
@@ -344,16 +347,16 @@ NOTE: Client identity is not typically validated using SSL because the receiving
       For more information, see https://www.rfc-editor.org/rfc/rfc2818#section-3.1[RFC2818 § 3.2 (HTTP over TLS -- Client Identity)]
 
 [id="plugins-{type}s-{plugin}-obsolete-options"]
-+==== Elasticsearch Output Obsolete Configuration Options
+==== Elasticsearch Output Obsolete Configuration Options
 
-+WARNING: As of version `2.0.0` of this plugin, some configuration options have been replaced.
-+The plugin will fail to start if it contains any of these obsolete options.
+WARNING: As of version `2.0.0` of this plugin, some configuration options have been replaced.
+The plugin will fail to start if it contains any of these obsolete options.
 
-+[cols="<,<",options="header",]
- |=======================================================================
-+|Setting|Replaced by
-+| ssl | <<plugins-{type}s-{plugin}-ssl_enabled>>
- |=======================================================================
+[cols="<,<",options="header",]
+|=======================================================================
+|Setting|Replaced by
+| ssl | <<plugins-{type}s-{plugin}-ssl_enabled>>
+|=======================================================================
 
 [id="plugins-{type}s-{plugin}-common-options"]
 include::{include_path}/{type}.asciidoc[]
