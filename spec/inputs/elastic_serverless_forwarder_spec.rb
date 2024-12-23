@@ -32,7 +32,7 @@ describe LogStash::Inputs::ElasticServerlessForwarder do
     let(:scheme) { 'http' }
 
     it_behaves_like "an interruptible input plugin" do
-      let(:config) { { "port" => port, "ssl" => false } }
+      let(:config) { { "port" => port, "ssl_enabled" => false } }
     end
 
     after :each do
@@ -322,22 +322,11 @@ describe LogStash::Inputs::ElasticServerlessForwarder do
     end
   end
 
-  describe 'deprecated SSL options' do
-    let(:config) do
-      super().merge({
-        'ssl_certificate' => generated_certs_directory.join('server_from_root.crt').to_path,
-        'ssl_key'         => generated_certs_directory.join('server_from_root.key.pkcs8').to_path,
-      })
-    end
+  describe 'removed SSL options' do
+    let(:config) { super().merge('ssl' => true) }
 
-    [true, false].each do |enabled|
-      context "when `ssl => #{enabled}`" do
-        let(:config) { super().merge('ssl' => enabled) }
-
-        it "sets @ssl_enabled to `#{enabled}`" do
-          expect(esf_input.instance_variable_get(:@ssl_enabled)).to be enabled
-        end
-      end
+    it "fails with message indicating ssl configuration option is obsolete" do
+      expect { described_class.new(config) }.to raise_error(LogStash::ConfigurationError, /Use 'ssl_enabled' instead/)
     end
   end
 end

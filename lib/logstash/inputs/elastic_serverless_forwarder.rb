@@ -10,7 +10,6 @@ require 'logstash/codecs/json_lines'
 
 class LogStash::Inputs::ElasticServerlessForwarder < LogStash::Inputs::Base
   include LogStash::PluginMixins::PluginFactorySupport
-  include LogStash::PluginMixins::NormalizeConfigSupport
 
   config_name "elastic_serverless_forwarder"
 
@@ -23,7 +22,6 @@ class LogStash::Inputs::ElasticServerlessForwarder < LogStash::Inputs::Base
   config :auth_basic_password,         :validate => :password
 
   # ssl-config
-  config :ssl,                         :validate => :boolean, :default => true, :deprecated => "Use 'ssl_enabled' instead."
   config :ssl_enabled,                 :validate => :boolean, :default => true
 
   # ssl-identity
@@ -41,10 +39,11 @@ class LogStash::Inputs::ElasticServerlessForwarder < LogStash::Inputs::Base
   config :ssl_supported_protocols,     :validate => :string,  :list => true
   config :ssl_handshake_timeout,       :validate => :number,  :default => 10_000
 
+  # obsolete config
+  config :ssl,                         :obsolete => "Use 'ssl_enabled' instead."
+
   def initialize(*a)
     super
-
-    normalize_ssl_configs!
 
     if original_params.include?('codec')
       fail LogStash::ConfigurationError, 'The `elastic_serverless_forwarder` input does not have an externally-configurable `codec`'
@@ -153,12 +152,6 @@ class LogStash::Inputs::ElasticServerlessForwarder < LogStash::Inputs::Base
       # enrichment avoidance
       'ecs_compatibility' => 'disabled',
     }
-  end
-
-  def normalize_ssl_configs!
-    @ssl_enabled = normalize_config(:ssl_enabled) do |normalizer|
-      normalizer.with_deprecated_alias(:ssl)
-    end
   end
 
   class QueueWrapper
