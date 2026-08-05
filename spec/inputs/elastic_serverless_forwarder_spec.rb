@@ -142,10 +142,13 @@ describe LogStash::Inputs::ElasticServerlessForwarder do
   shared_examples 'bad certificate request handling' do
     include_context 'basic request handling'
     describe 'connection' do
-      it 'rejects the connection with a bad_certificate error' do
+      # TLS 1.3 / BouncyCastle report a missing or untrusted required client
+      # certificate as `certificate_required` (alert 116) rather than the
+      # TLS 1.2 `bad_certificate` (alert 42); accept either fatal alert.
+      it 'rejects the connection with a bad_certificate or certificate_required error' do
         expect do
           client.post("#{scheme}://#{host}:#{port}/events", request_options.merge(body: ndjson_encoded_body)).call
-        end.to raise_exception(Manticore::ClientProtocolException, a_string_including('bad_certificate'))
+        end.to raise_exception(Manticore::ClientProtocolException, /bad_certificate|certificate_required/)
       end
     end
   end
