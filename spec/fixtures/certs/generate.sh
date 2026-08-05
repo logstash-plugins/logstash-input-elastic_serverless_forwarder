@@ -11,28 +11,28 @@ echo "DO NOT USE THESE CERTIFICATES IN PRODUCTION" >> ./README.txt
 
 # certificate authority
 openssl genrsa -out root.key 4096
-openssl req -new -x509 -days 1826 -extensions ca -key root.key -out root.crt -subj "/C=LS/ST=NA/L=Http Input/O=Logstash/CN=root" -config ../openssl.cnf
+openssl req -new -x509 -days 36500 -extensions ca -key root.key -out root.crt -subj "/C=LS/ST=NA/L=Http Input/O=Logstash/CN=root" -config ../openssl.cnf
 
 # server certificate from root
 openssl genrsa -out server_from_root.key 4096
 openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in server_from_root.key -out server_from_root.pkcs8.key
 openssl req -new -key server_from_root.key -out server_from_root.csr -subj "/C=LS/ST=NA/L=Http Input/O=Logstash/CN=server" -config ../openssl.cnf
-openssl x509 -req -extensions server_cert -extfile ../openssl.cnf -days 1096 -in server_from_root.csr -CA root.crt -CAkey root.key -set_serial 03 -out server_from_root.crt -sha256
+openssl x509 -req -extensions server_cert -extfile ../openssl.cnf -days 36500 -in server_from_root.csr -CA root.crt -CAkey root.key -set_serial 03 -out server_from_root.crt -sha256
 
 # client certificate from root
 openssl genrsa -out client_from_root.key 4096
 openssl req -new -key client_from_root.key -out client_from_root.csr -subj "/C=LS/ST=NA/L=Http Input/O=Logstash/CN=client" -config ../openssl.cnf
-openssl x509 -req -extensions client_cert -extfile ../openssl.cnf -days 1096 -in client_from_root.csr -CA root.crt -CAkey root.key -set_serial 04 -out client_from_root.crt -sha256
+openssl x509 -req -extensions client_cert -extfile ../openssl.cnf -days 36500 -in client_from_root.csr -CA root.crt -CAkey root.key -set_serial 04 -out client_from_root.crt -sha256
 
 # self-signed for testing
-openssl req -newkey rsa:4096 -nodes -keyout client_self_signed.key -x509 -days 365 -out client_self_signed.crt -subj "/C=LS/ST=NA/L=Http Input/O=Logstash/CN=self"
+openssl req -newkey rsa:4096 -nodes -keyout client_self_signed.key -x509 -days 36500 -out client_self_signed.crt -subj "/C=LS/ST=NA/L=Http Input/O=Logstash/CN=self"
 #openssl genrsa -out client_self_signed.key 4096
-#openssl req -new -x509 -days 1826 -extensions client_cert -key client_self_signed.key -out client_self_signed.crt -subj "/C=LS/ST=NA/L=Http Input/O=Logstash/CN=self" -config ../openssl.cnf
+#openssl req -new -x509 -days 36500 -extensions client_cert -key client_self_signed.key -out client_self_signed.crt -subj "/C=LS/ST=NA/L=Http Input/O=Logstash/CN=self" -config ../openssl.cnf
 
 ## client with invalid subject
 openssl genrsa -out client_no_matching_subject.key 4096
 openssl req -new -key client_no_matching_subject.key -out client_no_matching_subject.csr -subj "/C=LS/ST=NA/L=Http Input/O=Logstash/CN=client_no_matching_subject" -config ../openssl.cnf
-openssl x509 -req -extensions client_cert_no_matching_subject -extfile ../openssl.cnf -days 1096 -in client_no_matching_subject.csr -CA root.crt -CAkey root.key -set_serial 04 -out client_no_matching_subject.crt
+openssl x509 -req -extensions client_cert_no_matching_subject -extfile ../openssl.cnf -days 36500 -in client_no_matching_subject.csr -CA root.crt -CAkey root.key -set_serial 04 -out client_no_matching_subject.crt
 
 # verify :allthethings
 openssl verify -CAfile root.crt server_from_root.crt
