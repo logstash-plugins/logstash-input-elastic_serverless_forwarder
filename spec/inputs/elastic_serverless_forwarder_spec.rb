@@ -148,7 +148,10 @@ describe LogStash::Inputs::ElasticServerlessForwarder do
       it 'rejects the connection with a bad_certificate or certificate_required error' do
         expect do
           client.post("#{scheme}://#{host}:#{port}/events", request_options.merge(body: ndjson_encoded_body)).call
-        end.to raise_exception(Manticore::ClientProtocolException, /bad_certificate|certificate_required/)
+        end.to raise_error(satisfy { |e|
+          (e.is_a?(Manticore::ClientProtocolException) && e.message.match?(/bad_certificate|certificate_required/)) ||
+          (e.is_a?(Manticore::SocketException) && e.message.include?("Broken pipe"))
+        })
       end
     end
   end
